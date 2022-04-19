@@ -1,0 +1,8 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+For Final project:
+    H1: Teachers who work more on developing students' test-taking skills may agree they have higher quality and higher ready accessibility of professional development. (original data 27-29 column)
+    H2: Teacher who work more on administering, proctoring, and scoring mandated assessments may agree they have higher quality and higher ready accessibility of professional development. (original data 30-32 column)
+    H3: Teacher who work more on Reviewing and analyzing results of mandated assessments to improve instruction may agree that they have higher quality and higher ready accessibility of professional development.(original data 33-35 column)

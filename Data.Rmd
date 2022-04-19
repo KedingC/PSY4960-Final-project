@@ -1,0 +1,114 @@
+---
+title: "dat teacher"
+author: "Keding Chen"
+date: "4/6/2022"
+output: html_document
+---
+```{r}
+library(haven)
+library(ggplot2)
+library(tidyverse)
+library(dplyr)
+library(car)
+teacher <- read_sav("~/Desktop/2022/PSY 4960/Final project/Final project-Keding/TeacherData.sav")
+view(teacher)
+
+```
+
+## H1: 
+Teachers who work more on developing students' test-taking skills may agree they have higher quality and higher ready accessibility of professional development. 
+IV: Work time for students' test-taking skillls: original (column 17 TT3G18J1_USA2) now ("testskill")
+DV: poor quality (column 24 TT3G28H_USAX2) and low ready accessibility (column 25 TT3G28I_USAX2) of professional development(can be recoded as higher quality )
+
+### data clean
+```{r}
+
+colnames(teacher)[17]<-"testskill" # numbers mean hours
+colnames(teacher)[24]<-"poorquality" #1-strongly disagree,4-strongly agree
+colnames(teacher)[25]<-"pooraccessibility" #1-strongly disagree,4-strongly agree
+summary(as.factor(teacher$testskill))
+table(as.factor(teacher$testskill))
+table(as.factor(teacher$poorquality))
+table(as.factor(teacher$pooraccessibility))
+# what does the vector mean
+# there is no missing data but when I create the graph there are NAs
+teacher$quality<-teacher$poorquality
+teacher$quality<-car::recode(as.numeric(teacher$quality),'1=4;2=3;3=2;4=1')
+teacher$accessibility<-teacher$pooraccessibility
+teacher$accessibility<-car::recode(as.numeric(teacher$accessibility),'1=4;2=3;3=2;4=1')
+
+
+```
+
+### data analysis
+```{r}
+cor.test(teacher$quality,teacher$testskill)
+lm1<-lm(quality~testskill, data = teacher)
+summary(lm1)
+cor.test(teacher$accessibility,teacher$testskill) #significant 
+lm2<-lm(accessibility~testskill, data = teacher)
+summary(lm2)
+
+```
+
+### graph
+```{r}
+ggplot(teacher,aes(testskill))+geom_bar()+xlab(label="hours")+theme_linedraw()+facet_wrap(~as.factor(quality))
+g1<-ggplot(teacher,aes(testskill,accessibility))+geom_point()+theme_linedraw()+xlab(label="hours on students' test skill")+ylab(label="accessibility")+geom_smooth(method="lm")
+```
+
+## H2:
+Teachers who work more on administering, proctoring, and scoring mandated assessments may disagree they have higher quality and higher ready accessibility of professional development. 
+IV: Work time for scoring assessments: original (column 18 TT3G18J2_USA2) now ("scoreassess")
+DV: poor quality (column 24 TT3G28H_USAX2) and low ready accessibility (column 25 TT3G28I_USAX2) of professional development (can be recoded)
+
+### data clean
+```{r}
+colnames(teacher)[18]<-"scoreassess"
+
+```
+
+### data analysis
+```{r}
+cor.test(as.numeric(teacher$quality),as.numeric(teacher$scoreassess))
+lm3<-lm(quality~scoreassess, data = teacher)
+summary(lm3)
+cor.test(teacher$accessibility,teacher$scoreassess)
+lm4<-lm(accessibility~scoreassess, data = teacher)
+summary(lm4)
+```
+
+### graph
+```{r}
+ggplot(teacher,aes(scoreassess))+geom_bar()+xlab(label="hours")+theme_linedraw()+facet_wrap(~as.factor(poorquality))
+ggplot(teacher,aes(scoreassess,poorquality))+geom_point()+theme_linedraw()+xlab(label="hours")+ylab(label="agreeness")+geom_smooth(method="lm")
+```
+
+## H3:
+Teachers who work more on Reviewing and analyzing results of mandated assessments may agree they have higher quality and higher ready accessibility of professional development. 
+IV: Work time for review assessments: original (column 19 TT3G18J3_USA2) now ("reviewassess")
+DV: poor quality (column 24 TT3G28H_USAX2) and low ready accessibility (column 25 TT3G28I_USAX2) of professional development (can be recoded)
+
+### data clean
+```{r}
+colnames(teacher)[19]<-"reviewassess"
+```
+
+### data analysis
+```{r}
+cor.test(teacher$quality,teacher$reviewassess)#significant
+lm5<-lm(quality~reviewassess, data = teacher)
+summary(lm5)
+cor.test(teacher$accessibility,teacher$reviewassess)
+lm6<-lm(accessibility~reviewassess, data = teacher)
+summary(lm6)
+```
+
+### graph
+```{r}
+ggplot(teacher,aes(reviewassess))+geom_bar()+xlab(label="hours")+theme_linedraw()+facet_wrap(~as.factor(quality))
+g2<-ggplot(teacher,aes(reviewassess,quality))+geom_point()+theme_linedraw()+xlab(label="hours on reviewing")+ylab(label="quality")+geom_smooth(method="lm")
+```
+
+## conclusion:
+There is significant relationship that teachers working more hours on students' test skill may agree that they have higher professional accessibility. And there is significant relationship that teachers working more hours on reviewing and analyzing assessment may agree that they have higehr quality of professional development.
